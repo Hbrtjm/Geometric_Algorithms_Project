@@ -13,21 +13,17 @@ class QuadtreeNode:
         children: List of four child nodes (NW, NE, SW, SE)
         has_children: Whether this node has been subdivided
         max_cardinality: Maximum number of points before subdivision
-        max_depth: Maximum allowed depth of the tree
-        current_depth: Current depth of this node in the tree
     """
-    def __init__(self: Self, max_cardinality: int, area: Area | None = None, max_depth: int = 100, 
-                 current_depth: int = 0, points: list[Point] = []) -> None:
+    def __init__(self: Self, max_cardinality: int, area: Area | None = None, points: list[Point] = []) -> None:
         self.points: list[Point] = []
         self.area: Area | None = area
         self.children: list[QuadtreeNode] = [[] for _ in range(4)]
         self.has_children: bool = False
         self.max_cardinality: int = max_cardinality
-        self.max_depth: int = max_depth
-        self.current_depth: int = current_depth
         self.insert(points)
 
     def insert(self: Self, points: list[Point]) -> None:
+        # print(i)
         """Insert a list of points into the quadtree node.
         
         Args:
@@ -35,13 +31,15 @@ class QuadtreeNode:
         """
         if(self.area == None):
           self.area = self._get_minimal_area(points)
-        if(len(self.points) + len(points) <= self.max_cardinality or self.current_depth == self.max_depth):
+        if(len(self.points) + len(points) <= self.max_cardinality):
             self.points.extend(points)
             return
-    
+
+        subdivided = False
         if(not self.has_children):
             self._subdivide()
-        self._distribute_points(points)
+            subdivided = True
+        self._distribute_points(points, subdivided)
 
     def _subdivide(self: Self) -> None:
         """Create four child nodes by subdividing current area.
@@ -63,18 +61,18 @@ class QuadtreeNode:
         ]
         
         # Initialize child nodes with incremented depth
-        self.children = [QuadtreeNode(self.max_cardinality, area, self.max_depth, self.current_depth + 1) for area in areas]
+        self.children = [QuadtreeNode(self.max_cardinality, area) for area in areas]
         self.has_children = True
     
-    def _distribute_points(self: Self, points: list[Point]) -> None:
+    def _distribute_points(self: Self, points: list[Point], subdivided: bool = False) -> None:
         """Distribute points among child nodes.
         
         Args:
             points: List of points to distribute to appropriate child nodes
         """
-        points.extend(self.points)
-        self.points = []
-        
+        self.points.extend(points)
+        if(subdivided):
+          points = self.points
         for point in points:
             for child in self.children:
                 # The order of areas in area list takes care of proper edge-case handling
@@ -104,14 +102,11 @@ class Quadtree:
     
     Attributes:
         max_cardinality: Maximum number of points in a node before subdivision
-        max_depth: Maximum allowed depth of the tree
         root: Root node of the quadtree
     """
-    def __init__(self, points: list[Point] = [], max_cardinality: int = 1, 
-                 max_depth: int = 100) -> None:
+    def __init__(self, points: list[Point] = [], max_cardinality: int = 1) -> None:
         self.max_cardinality = max_cardinality
-        self.max_depth = max_depth
-        self.root = QuadtreeNode(max_cardinality=max_cardinality, max_depth=self.max_depth)
+        self.root = QuadtreeNode(max_cardinality=max_cardinality)
         self.root.insert(points)
 
     def find_points_in_area(self: Self, area: Area) -> list[Point]:
@@ -137,11 +132,7 @@ class Quadtree:
             node: Current node being searched
         """
         if(search_area.contains_area(node.area)):
-            if(node.has_children):
-                for child in node.children:
-                    self._find_points_in_area(search_area, result, child)
-            else:
-                result.extend(node.points)
+            result.extend(node.points)
         
         elif(node.area.intersects_with_area(search_area)):
             if(node.has_children):
