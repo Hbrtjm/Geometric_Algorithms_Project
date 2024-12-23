@@ -1,12 +1,10 @@
 from random import choice
 from typing import List
 
-# TODO:
-# Write all of the descriptions and comments
-
 def quickselect_median(l, dimension, pivot_function=choice):
-    return quickselect(l, len(l) // 2, pivot_function, dimension)
-
+    n = len(l)
+    index = n // 2 if n % 2 == 0 else n // 2 + 1
+    return quickselect(l, index, pivot_function, dimension)
 
 def quickselect(array, k, pivot_function,dimension):
     """
@@ -19,7 +17,7 @@ def quickselect(array, k, pivot_function,dimension):
     The kth element of the array
     """
     if len(array) == 1:
-        assert k == 0
+        # assert k == 0
         return array[0]
 
     pivot = pivot_function(array,dimension)
@@ -39,7 +37,9 @@ def quickselect(array, k, pivot_function,dimension):
 
 def nlogn_median(l,dimension):
     l = sorted(l,key=lambda elem: elem[dimension])
-    return l[len(l) // 2]
+    n = len(l)
+    index = n // 2 if n % 2 == 0 else n // 2 + 1
+    return l[index]
 
 def pick_pivot(l,dimension):
     """
@@ -68,27 +68,35 @@ def pick_pivot(l,dimension):
     median_of_medians = quickselect_median(medians, dimension, pick_pivot)
     return median_of_medians
 
-def chunked(array: List[tuple[float,float]], chunk_size: int) -> List[tuple[float,float]]:
+def chunked(array: List[tuple[float,float]], chunkSize: int) -> List[tuple[float,float]]:
     """
     Split array it to chunks of chunk_size elements.
     Parameters:
-        TODO
+        array - the list to be chunked
+        chunkSize - size of one chunk
     Returns:
         Array of subarrays of size chunk_size
     """
-    return [array[i:i + chunk_size] for i in range(0, len(array), chunk_size)]
+    return [array[i:i + chunkSize] for i in range(0, len(array), chunkSize)]
 
 def partition_array(array: List[tuple[float,float]],dimension):
     """
-    
+    Returns arrays of points partitioned by median 
+    Parameters:
+    array - list of k-dimentional points points
+    dimentsion - the index of dimentsion from [0,k-1], which the points should be compared by
+    Returs:
+    left - all of the elements are less than or equal to median by the given dimension, 
+    right - all of the elements are grater than or equal to median by the given dimension,
+    pivot - index of the median point
     """
-    if array == None:
+    if not array:
         return None,None,None
     n = len(array)
     if n == 1:
-        return array,None,array[0]
+        return None,None,array[0]
     if n == 2:
-        return [array[0]],[array[1]],min(array[0],array[1]) 
+        return [array[0]],[array[1]],min(array[0],array[1],key=lambda element: element[dimension]) 
 
     pivot = pick_pivot(array,dimension)
     # This could cause a problem since it might get the earliest pivot, TODO
@@ -102,7 +110,7 @@ def partition_array(array: List[tuple[float,float]],dimension):
             i += 1
 
     array[i], array[-1] = array[-1], array[i]
-    left = array[:i]
+    left = array[:max(i-1,0)]
     right = array[i+1:]
 
     return left, right, pivot

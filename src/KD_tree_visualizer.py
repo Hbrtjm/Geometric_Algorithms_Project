@@ -16,23 +16,6 @@ tree = KDTree()
 lowerOrUpper = 0
 drawRectangle = False
 rectangle = [(None,None),(None,None)]
-# Unused
-def draw_points_other(triangles, points, save_steps, step):
-    fig, ax = plt.subplots()
-    x, y = zip(*points)
-    ax.plot(x + (x[0],), y + (y[0],), 'k-', label="points") 
-    for triangle in triangles:
-        x_tri = [points[triangle[0]][0], points[triangle[1]][0], points[triangle[2]][0]]
-        y_tri = [points[triangle[0]][1], points[triangle[1]][1], points[triangle[2]][1]]
-        ax.fill(x_tri + [x_tri[0]], y_tri + [y_tri[0]], alpha=0.3, color="blue")
-
-    ax.scatter(x, y, color='red', zorder=5)
-    
-
-    ax.set_title(f"Triangulation Step {step}")
-    plt.axis("equal")
-    if save_steps:
-        plt.savefig(f"step_{step}.png")
 
 def update_plot():
     global limit, points, enterSquare, drawRectangle, tree, ax
@@ -50,7 +33,7 @@ def update_plot():
     triangulation_result = []
     if len(points) != 0:
         x_coords, y_coords = zip(*points)
-        ax.scatter(x_coords, y_coords, color="blue", s=5, label="Punkty")
+        ax.scatter(x_coords, y_coords, color="blue", s=5, label="Wprowadzone punkty")
     
     n = len(points)  
     if n == limit and not enterSquare:
@@ -74,7 +57,7 @@ def update_plot():
         if count > 0:
             x_coords, y_coords = zip(*inside_points)
             # Show them
-            ax.scatter(x_coords, y_coords, color="red", zorder=4, s=5, label="Punkty")
+            ax.scatter(x_coords, y_coords, color="red", zorder=4, s=5, label="Punkty wewnątrz prostokąta")
     if n == limit:
         # Draw the lines
         plot_kdtree_splits(tree.root)
@@ -83,10 +66,6 @@ def update_plot():
     ax.legend()
     plt.draw()
 
-
-def move_square(event):
-    # ================================ TODO ================================
-    pass
 
 def correct_rectangle():
     global rectangle
@@ -112,12 +91,12 @@ def onclick(event):
 
 def main():
     global limit, saveToFile, filename
-    saveToFileString = input("Czy wpisać wynik do pliku (1 - tak, w przeciwnym wypadku nie): ")
-    saveToFile = saveToFileString == '1'
-    if saveToFile:
-        potential_filename = input("Proszę podać nazwę pliku (podstawowa nazwa to wyniki.txt): ")
-        if potential_filename:
-            filename = potential_filename
+    # saveToFileString = input("Czy wpisać wynik do pliku (1 - tak, w przeciwnym wypadku nie): ")
+    # saveToFile = saveToFileString == '1'
+    # if saveToFile:
+    #     potential_filename = input("Proszę podać nazwę pliku (podstawowa nazwa to wyniki.txt): ")
+    #     if potential_filename:
+    #         filename = potential_filename
     limit_string = input("Ile punktów chcesz wprowadzić: ")
     if limit_string.isnumeric():
         limit = int(limit_string)
