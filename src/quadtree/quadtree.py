@@ -16,10 +16,10 @@ class QuadtreeNode:
         max_depth: Maximum allowed depth of the tree
         current_depth: Current depth of this node in the tree
     """
-    def __init__(self: Self, area: Area, max_cardinality: int, max_depth: int = 100, 
+    def __init__(self: Self, max_cardinality: int, area: Area | None = None, max_depth: int = 100, 
                  current_depth: int = 0, points: list[Point] = []) -> None:
         self.points: list[Point] = []
-        self.area: Area = area
+        self.area: Area | None = area
         self.children: list[QuadtreeNode] = [[] for _ in range(4)]
         self.has_children: bool = False
         self.max_cardinality: int = max_cardinality
@@ -33,6 +33,8 @@ class QuadtreeNode:
         Args:
             points: List of points to insert
         """
+        if(self.area == None):
+          self.area = self._get_minimal_area(points)
         if(len(self.points) + len(points) <= self.max_cardinality or self.current_depth == self.max_depth):
             self.points.extend(points)
             return
@@ -61,7 +63,7 @@ class QuadtreeNode:
         ]
         
         # Initialize child nodes with incremented depth
-        self.children = [QuadtreeNode(area, self.max_cardinality, self.max_depth, self.current_depth + 1) for area in areas]
+        self.children = [QuadtreeNode(self.max_cardinality, area, self.max_depth, self.current_depth + 1) for area in areas]
         self.has_children = True
     
     def _distribute_points(self: Self, points: list[Point]) -> None:
@@ -79,6 +81,22 @@ class QuadtreeNode:
                 if child.area.contains_point(point):
                     child.insert([point])
                     break
+    def _get_minimal_area(self, points: list[Point]) -> Area:
+        """Calculate the minimal bounding area containing all points.
+        
+        Args:
+            points: List of points to bound
+            
+        Returns:
+            Area object representing the minimal bounding rectangle
+        """
+        if(len(points) == 0):
+          return None
+        xs, ys = zip(*[(p.x, p.y) for p in points])
+        return Area(
+            Point(min(xs), min(ys)),
+            Point(max(xs), max(ys))
+        )
       
 
 class Quadtree:
@@ -93,23 +111,8 @@ class Quadtree:
                  max_depth: int = 100) -> None:
         self.max_cardinality = max_cardinality
         self.max_depth = max_depth
-        self.root = QuadtreeNode(self._get_minimal_area(points), max_cardinality, max_depth)
+        self.root = QuadtreeNode(max_cardinality=max_cardinality, max_depth=self.max_depth)
         self.root.insert(points)
-
-    def _get_minimal_area(self, points: list[Point]) -> Area:
-        """Calculate the minimal bounding area containing all points.
-        
-        Args:
-            points: List of points to bound
-            
-        Returns:
-            Area object representing the minimal bounding rectangle
-        """
-        xs, ys = zip(*[(p.x, p.y) for p in points])
-        return Area(
-            Point(min(xs), min(ys)),
-            Point(max(xs), max(ys))
-        )
 
     def find_points_in_area(self: Self, area: Area) -> list[Point]:
         """Find all points contained within the given area.
