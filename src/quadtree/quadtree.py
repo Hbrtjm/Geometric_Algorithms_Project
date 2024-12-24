@@ -20,10 +20,9 @@ class QuadtreeNode:
         self.children: list[QuadtreeNode] = [[] for _ in range(4)]
         self.has_children: bool = False
         self.max_cardinality: int = max_cardinality
-        self.insert(points)
+        self._insert(points)
 
-    def insert(self: Self, points: list[Point]) -> None:
-        # print(i)
+    def _insert(self: Self, points: list[Point]) -> None:
         """Insert a list of points into the quadtree node.
         
         Args:
@@ -77,7 +76,7 @@ class QuadtreeNode:
             for child in self.children:
                 # The order of areas in area list takes care of proper edge-case handling
                 if child.area.contains_point(point):
-                    child.insert([point])
+                    child._insert([point])
                     break
     def _get_minimal_area(self, points: list[Point]) -> Area:
         """Calculate the minimal bounding area containing all points.
@@ -107,7 +106,7 @@ class Quadtree:
     def __init__(self, points: list[Point] = [], max_cardinality: int = 1) -> None:
         self.max_cardinality = max_cardinality
         self.root = QuadtreeNode(max_cardinality=max_cardinality)
-        self.root.insert(points)
+        self.root._insert(points)
 
     def find_points_in_area(self: Self, area: Area) -> list[Point]:
         """Find all points contained within the given area.
