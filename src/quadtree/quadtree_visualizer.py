@@ -151,7 +151,7 @@ class QuadTreeVisualizer:
         plt.show()
     
     @staticmethod
-    def draw_static_plot(qt: Quadtree, selected_area: Area = None):
+    def _draw_static_plot(qt: Quadtree, selected_area: Area = None):
         fig, ax = plt.subplots()
         
         ax.set_title('Quadtree Visualization')
@@ -195,9 +195,33 @@ class QuadTreeVisualizer:
         ax.set_aspect('equal', 'box')  # Make the axes even
         plt.xlabel('X')
         plt.ylabel('Y')
+        # plt.show()
+        
+    def draw_static_plot(qt: Quadtree, selected_area: Area = None):
+        QuadTreeVisualizer._draw_static_plot(qt,selected_area)
         plt.show()
-
+    
+    def save_static_plot(qt: Quadtree, save_path:str, selected_area: Area = None):
+        QuadTreeVisualizer._draw_static_plot(qt,selected_area)
+        plt.savefig(save_path)
 
 if __name__ == "__main__":
-    visualizer = QuadTreeVisualizer()
-    visualizer.show()
+    # visualizer = QuadTreeVisualizer()
+    # visualizer.show()
+    import os
+    points = [(7.972658514060723,2.9213051894416964), 
+          (2.8401395213191707,2.3350141150011297), 
+          (4.169765238132268,9.45195039297934), 
+          (6.763021398609743,5.22074189912268), 
+          (9.94449930511674,5.194687843068271), 
+          (2.2456471549083212,8.97557406422351), 
+          (7.040128595128703,3.156306135972465), 
+          (1.1755180923817277,3.2991083286467218), 
+          (1.6533865111246049,4.57215235411275), 
+          (1.0566093659389786,0.5245294379309773)]
+    P = [Point(point[0], point[1]) for point in points]
+    Q = Quadtree(P,1)
+    area = Area(Point(0,0), Point(5,5))
+    QuadTreeVisualizer.draw_static_plot(Q,area)
+    QuadTreeVisualizer.save_static_plot(Q,os.path.join('C:\\Users\\Paweł\\Desktop\\Geometric_Algorithms_Project\\data\\img\\test.png'),area)
+    
