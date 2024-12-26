@@ -8,7 +8,8 @@ from matplotlib.widgets import Button
 
 limit = 4
 points = []
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(6,6))
+fig.subplots_adjust(bottom=0.2, top=0.9)
 saveToFile = False
 filename = "wyniki.txt"
 enterSquare = False
@@ -102,10 +103,10 @@ def main():
         limit = int(limit_string)
     fig.canvas.mpl_connect("button_press_event", onclick)
     update_plot()
-    clear_ax = plt.axes([0.1, 0.05, 0.2, 0.075])  # [left, bottom, width, height]
-    save_ax = plt.axes([0.4, 0.05, 0.2, 0.075])
-    load_ax = plt.axes([0.7, 0.05, 0.2, 0.075])
 
+    clear_ax = plt.axes([0.7, 0.05, 0.1, 0.075])  # [left, bottom, width, height]
+    save_ax = plt.axes([0.81, 0.05, 0.1, 0.075])
+    load_ax = plt.axes([0.59, 0.05, 0.1, 0.075])
     clear_button = Button(clear_ax, "Clear Points")
     save_button = Button(save_ax, "Save Points")
     load_button = Button(load_ax, "Load Points")
