@@ -82,7 +82,7 @@ class KDTree:
             # current.right = _build_tree(R, depth + 1)
 
             current = Node(array[median_index])
-            print(f"Depth {depth}, Dimension {dimension}, Median {array[median_index]}")
+            # print(f"Depth {depth}, Dimension {dimension}, Median {array[median_index]}")
 
             current.left = _build_tree(array[:median_index], depth + 1)
             current.right = _build_tree(array[median_index + 1:], depth + 1)
@@ -128,7 +128,7 @@ class KDTree:
             nonlocal count, points
             left_side = current.value[depth%self.k] >= lowerLeftPoint[depth%self.k]
             right_side = current.value[depth%self.k] <= upperRightPoint[depth%self.k]
-            print(f"Current node {current.value} is inside: {inside(current.value)} where lower {lowerLeftPoint} upper {upperRightPoint}")
+            # print(f"Current node {current.value} is inside: {inside(current.value)} where lower {lowerLeftPoint} upper {upperRightPoint}")
             if left_side and right_side and inside(current.value):
                 count += 1
                 points.append(current.value)
