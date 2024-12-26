@@ -1,6 +1,6 @@
 from __future__ import annotations
 # Deleted . from util
-from util.Geometry import Area, Point
+from .util.Geometry import Area, Point
 from typing import Self
 
 class QuadtreeNode:

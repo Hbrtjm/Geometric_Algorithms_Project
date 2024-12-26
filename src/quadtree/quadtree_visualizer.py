@@ -1,6 +1,6 @@
 from matplotlib.patches import Rectangle
 # Deleted quadtree. in the following import
-from quadtree import Quadtree, QuadtreeNode, Point, Area
+from .quadtree import Quadtree, QuadtreeNode, Point, Area
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 from typing import Optional

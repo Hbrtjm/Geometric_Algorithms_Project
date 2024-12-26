@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from kdtree import KDTree
+from .kdtree import KDTree
 import numpy as np
 from matplotlib.widgets import Button
 
