@@ -15,30 +15,28 @@ class QuadtreeNode:
         max_cardinality: Maximum number of points before subdivision
     """
     def __init__(self: Self, max_cardinality: int, area: Area | None = None, points: list[Point] = []) -> None:
-        self.points: list[Point] = []
+        self.points: set[Point] = set()
         self.area: Area | None = area
         self.children: list[QuadtreeNode] = [[] for _ in range(4)]
         self.has_children: bool = False
         self.max_cardinality: int = max_cardinality
-        self._insert(points)
+        self.insert(points) 
 
-    def _insert(self: Self, points: list[Point]) -> None:
+    def insert(self: Self, points: set[Point]) -> None:
         """Insert a list of points into the quadtree node.
         
         Args:
             points: List of points to insert
         """
-        if(self.area == None):
-          self.area = self._get_minimal_area(points)
-        if(len(self.points) + len(points) <= self.max_cardinality):
-            self.points.extend(points)
+        
+        if(self.area == None): self.area = self._get_minimal_area(points)
+        self.points.update(points)
+        if(len(self.points) <= self.max_cardinality):
             return
 
-        subdivided = False
         if(not self.has_children):
             self._subdivide()
-            subdivided = True
-        self._distribute_points(points, subdivided)
+        self._distribute_points(points)
 
     def _subdivide(self: Self) -> None:
         """Create four child nodes by subdividing current area.
@@ -61,22 +59,20 @@ class QuadtreeNode:
         
         # Initialize child nodes with incremented depth
         self.children = [QuadtreeNode(self.max_cardinality, area) for area in areas]
+        self._distribute_points(self.points)
         self.has_children = True
     
-    def _distribute_points(self: Self, points: list[Point], subdivided: bool = False) -> None:
+    def _distribute_points(self: Self, points: list[Point]) -> None:
         """Distribute points among child nodes.
         
         Args:
             points: List of points to distribute to appropriate child nodes
         """
-        self.points.extend(points)
-        if(subdivided):
-          points = self.points
         for point in points:
             for child in self.children:
                 # The order of areas in area list takes care of proper edge-case handling
                 if child.area.contains_point(point):
-                    child._insert([point])
+                    child.insert([point])
                     break
     def _get_minimal_area(self, points: list[Point]) -> Area:
         """Calculate the minimal bounding area containing all points.
@@ -97,16 +93,17 @@ class QuadtreeNode:
       
 
 class Quadtree:
-    """A quadtree data structure for efficient 2D point storage and retrieval.
+    """A quadtree data structure for efficient 2D point lookup.
     
     Attributes:
         max_cardinality: Maximum number of points in a node before subdivision
         root: Root node of the quadtree
+        base_area: A default 2D area, where points of Quadtree can be distributed. If not provided,
+        Quadtree will determine it by selecting the minimal area spanned by points.
     """
-    def __init__(self, points: list[Point] = [], max_cardinality: int = 1) -> None:
+    def __init__(self, points: list[Point] = [], max_cardinality: int = 1, default_area: Area=None) -> None:
         self.max_cardinality = max_cardinality
-        self.root = QuadtreeNode(max_cardinality=max_cardinality)
-        self.root._insert(points)
+        self.root = QuadtreeNode(points=points, max_cardinality=max_cardinality, area=default_area)
 
     def find_points_in_area(self: Self, area: Area) -> list[Point]:
         """Find all points contained within the given area.

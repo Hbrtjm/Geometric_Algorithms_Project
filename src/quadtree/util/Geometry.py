@@ -13,7 +13,7 @@ class Point:
         self.y = y 
 
     def __str__(self: Self) -> str:
-        return f"({self.x},{self.y})"
+        return f"({self.x}, {self.y})"
 
     def __repr__(self):
         return f"({self.x},{self.y})"
@@ -44,6 +44,8 @@ class Point:
                 return self.y
             case _:
                 raise ValueError("There is not such dimension")
+    def __hash__(self):
+        return hash((self.x,self.y))
               
 class Area:
     """Represents a rectangular area in 2D space.
