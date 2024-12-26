@@ -27,7 +27,7 @@ class Point:
     def __getitem__(self: Self,index: int) -> float:
         match index:
             case 0:
-                return self.y
+                return self.x
             case 1:
                 return self.y
             case _:
@@ -59,13 +59,13 @@ class KDTree:
         self.root = None
         self.k = K
     
-    def build_tree(self: Self, array: List[tuple[float,float]], depth: int=0) -> None:
+    def build_tree(self: Self, array: Point, depth: int=0) -> None:
         """
         Build the KDTree from the given array of points.
         Parameters:
         TODO
         """
-        def _build_tree(array: List[tuple[float,float]], depth: int) -> Node:
+        def _build_tree(array: List[Point], depth: int) -> Node:
             if not array:
                 return None
             if len(array) == 1:
@@ -101,13 +101,13 @@ class KDTree:
         """
         Converts the whole tree int an array of form [left child]<-[parent]->[right child]
         """
-        def transform(current: Node) -> List[tuple[float,float]]:
+        def transform(current: Node) -> List[Point]:
             if(current == None):
                 return []
             return transform(current.left) + ([current.value] if current.value != None else [])   + transform(current.right)
         return transform(self.root)
     
-    def get_points_in_rectangle(self: Self, lowerLeftPoint: tuple[float,float], upperRightPoint: tuple[float,float]) -> tuple[int,List[tuple[float,float]]]:
+    def get_points_in_rectangle(self: Self, lowerLeftPoint: Point, upperRightPoint: Point) -> tuple[int,List[Point]]:
         """
         Searches the given area and calculates how many and what points are in the given region in O(P) time, where P is the amounts of points in the rectangle
         On average this time would be O(h), where h is the height of the tree, where h = log(n), where n is the amount of all points
@@ -117,7 +117,7 @@ class KDTree:
         """
         count = 0
         points = []
-        def inside(checked: tuple[float,float]):
+        def inside(checked: Point):
             for i in range(self.k):
                 if checked[i] < lowerLeftPoint[i] or checked[i] > upperRightPoint[i]:
                     return False

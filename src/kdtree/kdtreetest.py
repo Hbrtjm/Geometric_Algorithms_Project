@@ -4,6 +4,6 @@ points1 = [(np.float64(0.18145161290322576), np.float64(0.2959677419354838)), (n
 points = [(-2,3),(-1,2),(1,1),(2,2),(1,4),(1,-2),(1,2)]
 points_1 = [ Point(e[0],e[1]) for e in points ]
 tree = KDTree()
-tree.build_tree(points)
+tree.build_tree(points1)
 
 print(tree.get_points_in_rectangle((0.15,-0.6),(0.5,-0.4)))
