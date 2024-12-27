@@ -1,38 +1,7 @@
 from typing import Self, List
 # from kdtreeutil import partition_array
 import numpy as np
-
-class Point:
-    """
-    Dummy class for points, can be used later, for now it finds no application
-    """
-    def __init__(self,x: float,y: float):
-        self.x = x
-        self.y = y 
-
-    def __str__(self: Self) -> str:
-        return f"({self.x},{self.y})"
-
-    def __eq__(self: Self, other: Self) -> bool:
-        return self.x == other.x and self.y == other.y
-    
-    def __lt__(self: Self, other: Self) -> bool:
-        return self.x < other.x
-
-    def __gt__(self: Self, other: Self) -> bool:
-        return self.x > other.x
-    def __iter__(self: Self) -> tuple[float,float]:
-        return (self.x,self.y)
-    
-    def __getitem__(self: Self,index: int) -> float:
-        match index:
-            case 0:
-                return self.x
-            case 1:
-                return self.y
-            case _:
-                raise ValueError("There is not such dimension")
-
+from .util.geometry import Point
 class Node:
     """
     Tree node class
@@ -59,7 +28,7 @@ class KDTree:
         self.root = None
         self.k = K
     
-    def build_tree(self: Self, array: Point, depth: int=0) -> None:
+    def build_tree(self: Self, array: List[Point], depth: int=0) -> None:
         """
         Build the KDTree from the given array of points.
         Parameters:
@@ -76,13 +45,12 @@ class KDTree:
             median_index = len(array) // 2
             
             # L,R,pivot = partition_array(array,dimension)
-            # print(f"Picked pivot {pivot} and left {L} right {R}")
+            # # # print(f"Picked pivot {pivot} and left {L} right {R}")
             # current = Node(pivot)
             # current.left = _build_tree(L, depth + 1)
             # current.right = _build_tree(R, depth + 1)
 
             current = Node(array[median_index])
-            # print(f"Depth {depth}, Dimension {dimension}, Median {array[median_index]}")
 
             current.left = _build_tree(array[:median_index], depth + 1)
             current.right = _build_tree(array[median_index + 1:], depth + 1)
@@ -91,11 +59,71 @@ class KDTree:
 
         self.root = _build_tree(array, depth)
     
-    def add_point(self: Self):
-        pass
+    def insert_point(self: Self, point: Point):
+        
+        def insertRec(node: Node, point: Point, depth: int = 0):
+            
+            if not node:
+                return Node(point)
+
+            cd = depth % self.k
+
+            if point[cd] < node.value[cd]:
+                node.left = insertRec(node.left, point, depth + 1)
+            else:
+                node.right = insertRec(node.right, point, depth + 1)
+
+            return node
+        
+        self.root = insertRec(self.root, point, 0)
+
+    def copyPoint(self: Self,p1: Point, p2: Point):
+        """
+        Writes values from one point to another
+
+        """
+        for i in range(self.k):
+            p1[i] = p2[i]
     
-    def delete_point(self: Self):
-        pass
+    def min_value_node(self: Self,node: Node):
+        """
+        
+        """
+        currentNode = node
+        while currentNode.left:
+            currentNode = currentNode.left
+        return currentNode
+    
+    def delete_node_rec(self: Self, node: Node, point: Point, depth: int):
+        """
+        """
+        if not node:
+            return None
+    
+        dimension = depth % self.k
+        if point[dimension] < node.value[dimension]:
+            node.left = self.delete_node_rec(node.left, point, depth + 1)
+        elif point[dimension] > node.value[dimension]:
+            node.right = self.delete_node_rec(node.right, point, depth + 1)
+        else:
+            if not node.left:
+                return node.right
+            elif not node.right:
+                return node.left
+            else:
+                temp: Node = self.min_value_node(node.right)
+                self.copyPoint(node.value, temp.value)
+                node.right = self.delete_node_rec(node.right, temp.value, depth + 1)
+        return node
+    
+    def delete_point(self: Self, point: Point):
+        """
+        Deletes node using recursive function defined above
+        Arguments:
+        node - a starting node
+        point - a point value to be deleted
+        """
+        self.node = self.delete_node_rec(self.root, point, 0)
     
     def bst_to_list(self: Self):
         """
@@ -128,7 +156,6 @@ class KDTree:
             nonlocal count, points
             left_side = current.value[depth%self.k] >= lowerLeftPoint[depth%self.k]
             right_side = current.value[depth%self.k] <= upperRightPoint[depth%self.k]
-            # print(f"Current node {current.value} is inside: {inside(current.value)} where lower {lowerLeftPoint} upper {upperRightPoint}")
             if left_side and right_side and inside(current.value):
                 count += 1
                 points.append(current.value)

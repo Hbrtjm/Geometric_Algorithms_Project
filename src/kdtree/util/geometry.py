@@ -1,54 +1,146 @@
 from __future__ import annotations
-from typing import Self
+from typing import Self, List
 
 class Point:
-    """Represents a 2D point with x and y coordinates.
-    
-    Attributes:
-        x: x-coordinate
-        y: y-coordinate
     """
-    def __init__(self, x: float, y: float) -> None:
+    Represents a K-dimensional point in space
+    
+    Arguments:
+
+    """
+    def __init__(self, x: float,y: float,z: float = None,higher_dimensions: List[float] = None):
+        """
+        Initializes a Point object with the given coordinates.
+
+        Arguments:
+        - x - The x-coordinate (required).
+        - y - The y-coordinate (required).
+        - z - The z-coordinate (default is None).
+        - higher_dimensions (List[float], optional): Additional dimensions for K-dimensional points.
+
+        """
+
+        self.values = [x,y,z]
+        if higher_dimensions:
+            for element in higher_dimensions:
+                self.values.append(element) # To avoid adding None or errors when using *higher_dimensions
         self.x = x
-        self.y = y 
+        self.y = y
+        self.dimensions = len(self.values) if self.values[2] != None else 2
 
     def __str__(self: Self) -> str:
-        return f"({self.x}, {self.y})"
-
-    def __repr__(self):
+        """
+        Returns a string representation of the point.
+        """
+        if self.values[2] != None:
+            result = "("
+            for index, element in enumerate(self.values):
+                result = result + str(element) + ("," if index < self.dimensions-1 else ")")
+            return result 
         return f"({self.x},{self.y})"
 
     def __eq__(self: Self, other: Self) -> bool:
-        return self.x == other.x and self.y == other.y
+        """
+        Checks if two points are equal.
+
+        Arguments:
+        - other - The point to compare against.
+
+        Returns:
+        - Boolean if the points are equal or not
+        """
+
+        if other.dimensions != self.dimensions or other is None or not isinstance(other,self):
+            return False
+        if self.values[2] != None:
+            for index, value in enumerate(other.values):
+                if self.values[index] != value:
+                    return False
+            return True
+        else:
+            return self.x == other.x and self.y == other.y
     
     def __lt__(self: Self, other: Self) -> bool:
-        return self.x < other.x and self.y < other.y
+        """
+        Compares two points based on their x-coordinate.
+        
+        Arguments:
+        - other - The point to compare against.
+
+        """
+        return self.x < other.x
 
     def __gt__(self: Self, other: Self) -> bool:
-        return self.x > other.x and self.y > other.y
+        """
+        Compares two points based on their x-coordinate.
+
+        Arguments:
+        - other - The point to compare against.
+
+        """
+        return self.x > other.x
     
-    def __le__(self: Self, other: Self) -> bool:
-        return self.x <= other.x and self.y <= other.y
-    
-    def __ge__(self: Self, other: Self) -> bool:
-        return self.x >= other.x and self.y >= other.y
-    
-    def __iter__(self: Self) -> tuple[float,float]:
-        return (self.x,self.y)
+    def __iter__(self: Self) -> List[float]:
+        """
+        Allows iteration over the point's coordinates.
+        """
+
+        if self.values[2] != None:
+            return self.values
+        return [self.x,self.y]
     
     def __getitem__(self: Self,index: int) -> float:
-        match index:
-            case 0:
-                return self.x
-            case 1:
-                return self.y
-            case _:
-                raise ValueError("There is not such dimension")
-    def __hash__(self):
-        return hash((self.x,self.y))
+        """
+        Accesses a specific coordinate by index.
+
+        Arguments:
+        - index -  The index of the coordinate to retrieve.
+
+        Returns:
+        - value 
+        """
+
+        if self.values[2] != None:
+            if index >= self.dimensions:
+                raise ValueError("Point index out of range")
+            return self.values[index]
+        else:
+            match index:
+                case 0:
+                    return self.x
+                case 1:
+                    return self.y
+                case _:
+                    raise ValueError("Point index out of range")
+    
+    def __setitem__(self: Self, index: int, value: float):
+        """
+        Modifies a specific coordinate by index.
+
+        Arguments:
+        - index - The index of the coordinate to modify.
+        - value - The new value for the coordinate.
+
+        """
+        if self.values[2] != None:
+            if index >= self.dimensions:
+                raise ValueError("Point index out of range")
+            self.values[index] = value
+        else:
+            match index:
+                case 0:
+                    self.x = value
+                    self.values[0] = value
+                case 1:
+                    self.y = value
+                    self.values[1] = value
+                case _:
+                    raise ValueError("Point index out of range")
+
               
 class Area:
-    """Represents a rectangular area in 2D space.
+    """
+    Represents a rectangular area in 2D space.
     
     Defined by two points: bottom-left and upper-right corners.
     
@@ -66,9 +158,10 @@ class Area:
         return f"[{self.bottom_left}:{self.upper_right}]"
   
     def contains_area(self: Self, area: Area) -> bool:
-        """Check if this area fully contains another area.
+        """
+        Check if this area fully contains another area.
         
-        Args:
+        Arguments:
             area: Area to check for containment
             
         Returns:
@@ -82,7 +175,7 @@ class Area:
     def intersects_with_area(self: Self, area: Area) -> bool:
         """Check if this area intersects with another area.
         
-        Args:
+        Argsuments:
             area: Area to check for intersection
             
         Returns:
@@ -98,7 +191,7 @@ class Area:
     def contains_point(self: Self, point: Point) -> bool:
         """Check if this area contains a point.
         
-        Args:
+        Arguments:
             point: Point to check for containment
             
         Returns:

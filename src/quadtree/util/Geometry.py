@@ -34,7 +34,7 @@ class Point:
         return self.x >= other.x and self.y >= other.y
     
     def __iter__(self: Self) -> tuple[float,float]:
-        return (self.x,self.y)
+        return [self.x,self.y]
     
     def __getitem__(self: Self,index: int) -> float:
         match index:
