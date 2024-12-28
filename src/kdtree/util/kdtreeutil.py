@@ -79,7 +79,34 @@ def chunked(array: List[tuple[float,float]], chunkSize: int) -> List[tuple[float
     """
     return [array[i:i + chunkSize] for i in range(0, len(array), chunkSize)]
 
-def partition_array(array: List[tuple[float,float]],dimension):
+# def partition_array(array: List[tuple[float,float]],dimension):
+
+#     if not array:
+#         return None,None,None
+#     n = len(array)
+#     if n == 1:
+#         return None,None,array[0]
+#     if n == 2:
+#         return [array[0]],[array[1]],min(array[0],array[1],key=lambda element: element[dimension]) 
+
+#     pivot = pick_pivot(array,dimension)
+#     # This could cause a problem since it might get the earliest pivot
+#     pivot_index = array.index(pivot)
+#     array[pivot_index], array[-1] = array[-1], array[pivot_index]
+
+#     i = 0
+#     for j in range(n - 1):
+#         if array[j] < pivot:
+#             array[i], array[j] = array[j], array[i]
+#             i += 1
+
+#     array[i], array[-1] = array[-1], array[i]
+#     left = array[:max(i-1,0)]
+#     right = array[i+1:]
+
+#     return left, right, pivot
+
+def partition_array(array: List[tuple[float, float]], dimension: int):
     """
     Returns arrays of points partitioned by median 
     Parameters:
@@ -91,26 +118,28 @@ def partition_array(array: List[tuple[float,float]],dimension):
     pivot - index of the median point
     """
     if not array:
-        return None,None,None
+        return None, None, None
+
     n = len(array)
     if n == 1:
-        return None,None,array[0]
+        return None, None, array[0]
+    
     if n == 2:
-        return [array[0]],[array[1]],min(array[0],array[1],key=lambda element: element[dimension]) 
+        return [array[0]], [array[1]], min(array[0], array[1], key=lambda element: element[dimension])
 
-    pivot = pick_pivot(array,dimension)
-    # This could cause a problem since it might get the earliest pivot, TODO
+    # Select the pivot using the pivot function
+    pivot = pick_pivot(array, dimension)
     pivot_index = array.index(pivot)
     array[pivot_index], array[-1] = array[-1], array[pivot_index]
 
     i = 0
     for j in range(n - 1):
-        if array[j] < pivot:
+        if array[j][dimension] < pivot[dimension]:
             array[i], array[j] = array[j], array[i]
             i += 1
-
     array[i], array[-1] = array[-1], array[i]
-    left = array[:max(i-1,0)]
-    right = array[i+1:]
 
-    return left, right, pivot
+    left = array[:i]  
+    right = array[i+1:] 
+
+    return left, right, array[i]

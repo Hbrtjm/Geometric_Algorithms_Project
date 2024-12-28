@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import Self, List
 
 class Point:
@@ -50,7 +49,7 @@ class Point:
         - Boolean if the points are equal or not
         """
 
-        if other.dimensions != self.dimensions or other is None or not isinstance(other,self):
+        if other.dimensions != self.dimensions or other is None or not isinstance(other,type(self)):
             return False
         if self.values[2] != None:
             for index, value in enumerate(other.values):
@@ -138,66 +137,66 @@ class Point:
                     raise ValueError("Point index out of range")
 
               
-class Area:
-    """
-    Represents a rectangular area in 2D space.
+# class Area:
+#     """
+#     Represents a rectangular area in 2D space.
     
-    Defined by two points: bottom-left and upper-right corners.
+#     Defined by two points: bottom-left and upper-right corners.
     
-    Attributes:
-        bottom_left: Point representing the bottom-left corner
-        upper_right: Point representing the upper-right corner
-    """
-    def __init__(self, bottom_left: Point, upper_right: Point) -> None:
-        self.bottom_left = bottom_left
-        self.upper_right = upper_right 
+#     Attributes:
+#         bottom_left: Point representing the bottom-left corner
+#         upper_right: Point representing the upper-right corner
+#     """
+#     def __init__(self, bottom_left: Point, upper_right: Point) -> None:
+#         self.bottom_left = bottom_left
+#         self.upper_right = upper_right 
       
-    def __str__(self: Self) -> str:
-        return f"[{self.bottom_left}:{self.upper_right}]"
-    def __repr__(self: Self) -> str:
-        return f"[{self.bottom_left}:{self.upper_right}]"
+#     def __str__(self: Self) -> str:
+#         return f"[{self.bottom_left}:{self.upper_right}]"
+#     def __repr__(self: Self) -> str:
+#         return f"[{self.bottom_left}:{self.upper_right}]"
   
-    def contains_area(self: Self, area: Area) -> bool:
-        """
-        Check if this area fully contains another area.
+#     def contains_area(self: Self, area: Area) -> bool:
+#         """
+#         Check if this area fully contains another area.
         
-        Arguments:
-            area: Area to check for containment
+#         Arguments:
+#             area: Area to check for containment
             
-        Returns:
-            True if the given area is completely contained within this area
-        """
-        return (
-            area.upper_right <= self.upper_right and 
-            area.bottom_left >= self.bottom_left
-        )
+#         Returns:
+#             True if the given area is completely contained within this area
+#         """
+#         return (
+#             area.upper_right <= self.upper_right and 
+#             area.bottom_left >= self.bottom_left
+#         )
   
-    def intersects_with_area(self: Self, area: Area) -> bool:
-        """Check if this area intersects with another area.
+#     def intersects_with_area(self: Self, area: Area) -> bool:
+#         """Check if this area intersects with another area.
         
-        Argsuments:
-            area: Area to check for intersection
+#         Argsuments:
+#             area: Area to check for intersection
             
-        Returns:
-            True if the areas intersect
-        """
-        return (
-            area.upper_right.x > self.bottom_left.x and 
-            area.bottom_left.x < self.upper_right.x and
-            area.upper_right.y > self.bottom_left.y and
-            area.bottom_left.y < self.upper_right.y
-        )
+#         Returns:
+#             True if the areas intersect
+#         """
+#         return (
+#             area.upper_right.x > self.bottom_left.x and 
+#             area.bottom_left.x < self.upper_right.x and
+#             area.upper_right.y > self.bottom_left.y and
+#             area.bottom_left.y < self.upper_right.y
+#         )
   
-    def contains_point(self: Self, point: Point) -> bool:
-        """Check if this area contains a point.
+#     def contains_point(self: Self, point: Point) -> bool:
+#         """Check if this area contains a point.
         
-        Arguments:
-            point: Point to check for containment
+#         Arguments:
+#             point: Point to check for containment
             
-        Returns:
-            True if the point lies within this area
-        """
-        return (
-            self.bottom_left.x <= point.x <= self.upper_right.x and
-            self.bottom_left.y <= point.y <= self.upper_right.y
-        )
+#         Returns:
+#             True if the point lies within this area
+#         """
+#         return (
+#             self.bottom_left.x <= point.x <= self.upper_right.x and
+#             self.bottom_left.y <= point.y <= self.upper_right.y
+#         )

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from .kdtree import KDTree, Point, Node
+from kdtree import KDTree, Point, Node
 from typing import Self, List
 import numpy as np
 from matplotlib.patches import Rectangle
@@ -84,7 +84,7 @@ class KDTreeVisualizer:
         
         self.buttonSavePoints.on_clicked(self.save_points)
         self.buttonLoadPoints.on_clicked(self.load_points)
-        self.buttonAddPoints.on_clicked(self._set_point_mode)
+        self.buttonAddPoints.on_clicked(self.set_point_mode)
         self.buttonAddArea.on_clicked(self.set_area_mode)
         self.buttonClear.on_clicked(self.clear_plot)
 
@@ -94,10 +94,12 @@ class KDTreeVisualizer:
     def update_load_filename(self: Self):
         self.loadFilename = self.textBoxLoadFilename.text_disp._text
 
-    def _set_point_mode(self: Self, event):
+    def set_point_mode(self: Self, event):
         """
         Set mode to point insertion
         """
+        self.buttonAddPoints.color = 'green'
+        self.buttonAddArea.color = 'lightgray'
         self.mode = 'point'
         self.rectangle = []
         
@@ -105,6 +107,8 @@ class KDTreeVisualizer:
         """
         Set mode to area insertion
         """
+        self.buttonAddPoints.color = 'lightgray'
+        self.buttonAddArea.color = 'green'
         self.mode = 'area'
         self.rectangle = []
     
@@ -336,3 +340,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+

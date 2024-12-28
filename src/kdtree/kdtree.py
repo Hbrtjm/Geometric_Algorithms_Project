@@ -1,7 +1,7 @@
 from typing import Self, List
-# from kdtreeutil import partition_array
+from util.kdtreeutil import partition_array
 import numpy as np
-from .util.geometry import Point
+from util.geometry import Point
 class Node:
     """
     Tree node class
@@ -32,7 +32,8 @@ class KDTree:
         """
         Build the KDTree from the given array of points.
         Parameters:
-        TODO
+        array - list of points to be split
+        depth - the depth of tree that determines the dimension of tree, given the K dimensions of a point, the current dimension points in array will be sorted by is dim = (depth % K) 
         """
         def _build_tree(array: List[Point], depth: int) -> Node:
             if not array:
@@ -44,16 +45,16 @@ class KDTree:
             array.sort(key=lambda point: point[dimension])
             median_index = len(array) // 2
             
-            # L,R,pivot = partition_array(array,dimension)
-            # # # print(f"Picked pivot {pivot} and left {L} right {R}")
-            # current = Node(pivot)
-            # current.left = _build_tree(L, depth + 1)
-            # current.right = _build_tree(R, depth + 1)
+            L,R,pivot = partition_array(array,dimension)
+            # print(f"Picked pivot {pivot} and left {L} right {R}")
+            current = Node(pivot)
+            current.left = _build_tree(L, depth + 1)
+            current.right = _build_tree(R, depth + 1)
 
-            current = Node(array[median_index])
+            # current = Node(array[median_index])
 
-            current.left = _build_tree(array[:median_index], depth + 1)
-            current.right = _build_tree(array[median_index + 1:], depth + 1)
+            # current.left = _build_tree(array[:median_index], depth + 1)
+            # current.right = _build_tree(array[median_index + 1:], depth + 1)
 
             return current
 
