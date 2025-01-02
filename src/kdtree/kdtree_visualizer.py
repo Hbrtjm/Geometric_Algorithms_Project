@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from kdtree import KDTree, Point, Node
+from .kdtree import KDTree, Point, Node
 from typing import Self, List
 import numpy as np
 from matplotlib.patches import Rectangle
