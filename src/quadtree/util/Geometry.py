@@ -89,10 +89,10 @@ class Area:
             True if the areas intersect
         """
         return (
-            area.upper_right.x > self.bottom_left.x and 
-            area.bottom_left.x < self.upper_right.x and
-            area.upper_right.y > self.bottom_left.y and
-            area.bottom_left.y < self.upper_right.y
+            area.upper_right.x >= self.bottom_left.x and 
+            area.bottom_left.x <= self.upper_right.x and
+            area.upper_right.y >= self.bottom_left.y and
+            area.bottom_left.y <= self.upper_right.y
         )
   
     def contains_point(self: Self, point: Point) -> bool:
