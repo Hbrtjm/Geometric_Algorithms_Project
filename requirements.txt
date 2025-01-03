@@ -1,3 +1,5 @@
 numpy
 matplotlib
 typing
+notebook
+ipython==8.16.1
