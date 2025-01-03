@@ -222,7 +222,7 @@ class QuadTreeVisualizer:
       return rect
     
     @staticmethod
-    def save_quadtree_construction_gif(qt: Quadtree, save_path: str, interval: int = 500):
+    def save_quadtree_construction_gif(qt: Quadtree, save_path: str, interval: int = 500) -> Image:
         """Save a GIF of the step-by-step construction of the Quadtree.
         
         Args:
