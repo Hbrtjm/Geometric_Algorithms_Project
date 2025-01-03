@@ -3,7 +3,10 @@ from matplotlib.patches import Rectangle
 from .quadtree import Quadtree, QuadtreeNode, Point, Area
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
-from typing import Optional
+from matplotlib.animation import FuncAnimation, PillowWriter
+from typing import Optional, Any
+import os
+from IPython.display import Image
 
 PLOT_TITLE_INTERACTIVE = 'QuadTree Visualization\nClick to add points or areas'
 
@@ -195,33 +198,89 @@ class QuadTreeVisualizer:
         ax.set_aspect('equal', 'box')  # Make the axes even
         plt.xlabel('X')
         plt.ylabel('Y')
-        # plt.show()
-        
+    
+    @staticmethod
     def draw_static_plot(qt: Quadtree, selected_area: Area = None):
         QuadTreeVisualizer._draw_static_plot(qt,selected_area)
         plt.show()
     
+    @staticmethod
     def save_static_plot(qt: Quadtree, save_path:str, selected_area: Area = None):
         QuadTreeVisualizer._draw_static_plot(qt,selected_area)
         plt.savefig(save_path)
+    
+    @staticmethod
+    def _draw_nodes_rect(node: QuadtreeNode, ax: Any):
+      rect = Rectangle(
+            (node.area.bottom_left.x, node.area.bottom_left.y),
+            node.area.upper_right.x - node.area.bottom_left.x,
+            node.area.upper_right.y - node.area.bottom_left.y,
+            linewidth=1, edgecolor='black', facecolor='none'
+        )
+      ax.add_patch(rect)
+      rect.set_visible(False)
+      return rect
+    
+    @staticmethod
+    def save_quadtree_construction_gif(qt: Quadtree, save_path: str, interval: int = 500):
+        """Save a GIF of the step-by-step construction of the Quadtree.
+        
+        Args:
+            qt: The Quadtree to visualize
+            save_path: Path to save the GIF
+            interval: Time interval between frames in milliseconds
+        """
+        fig, ax = plt.subplots()
+        ax.set_xlim(qt.root.area.bottom_left.x, qt.root.area.upper_right.x)
+        ax.set_ylim(qt.root.area.bottom_left.y, qt.root.area.upper_right.y)
+        ax.set_aspect('equal')
+        
+        # Draw points in the node
+        for point in qt.root.points:
+            ax.plot(point.x, point.y, '.', color='blue')
+        # Initialise frames with root square
+        frames = []
+        rect = QuadTreeVisualizer._draw_nodes_rect(qt.root, ax)
+        frames.append(rect)
+        
+        def draw_node(node: QuadtreeNode):   
+            # Recursively draw child nodes
+            current_squares = []
+            if node.has_children:
+                for child in node.children:
+                    rect = QuadTreeVisualizer._draw_nodes_rect(child, ax)
+                    draw_node(child)
+                    current_squares.append(rect)
+                frames.append(current_squares)
+
+        draw_node(qt.root)
+
+        def update(frame):
+            for artist in frames[:frame]:
+                for item in artist:
+                    item.set_visible(True)
+            return [item for sublist in frames[:frame] for item in sublist]
+        
+        
+        frames.reverse()
+        ani = FuncAnimation(fig, update, frames=len(frames), interval=interval, blit=True)
+        ani.save(save_path, writer=PillowWriter(fps=1000 // interval))
+        # plt.show()
+        plt.close(fig)
+        
+        return Image(filename=save_path)
 
 if __name__ == "__main__":
-    # visualizer = QuadTreeVisualizer()
-    # visualizer.show()
-    import os
     points = [(7.972658514060723,2.9213051894416964), 
-          (2.8401395213191707,2.3350141150011297), 
-          (4.169765238132268,9.45195039297934), 
-          (6.763021398609743,5.22074189912268), 
-          (9.94449930511674,5.194687843068271), 
-          (2.2456471549083212,8.97557406422351), 
-          (7.040128595128703,3.156306135972465), 
-          (1.1755180923817277,3.2991083286467218), 
-          (1.6533865111246049,4.57215235411275), 
-          (1.0566093659389786,0.5245294379309773)]
+              (2.8401395213191707,2.3350141150011297), 
+              (4.169765238132268,9.45195039297934), 
+              (6.763021398609743,5.22074189912268), 
+              (9.94449930511674,5.194687843068271), 
+              (2.2456471549083212,8.97557406422351), 
+              (7.040128595128703,3.156306135972465), 
+              (1.1755180923817277,3.2991083286467218), 
+              (1.6533865111246049,4.57215235411275), 
+              (1.0566093659389786,0.5245294379309773)]
     P = [Point(point[0], point[1]) for point in points]
-    Q = Quadtree(P,1)
-    area = Area(Point(0,0), Point(5,5))
-    QuadTreeVisualizer.draw_static_plot(Q,area)
-    QuadTreeVisualizer.save_static_plot(Q,os.path.join('C:\\Users\\Paweł\\Desktop\\Geometric_Algorithms_Project\\data\\img\\test.png'),area)
-    
+    Q = Quadtree(P, 1)
+    QuadTreeVisualizer.save_quadtree_construction_gif(Q, os.path.join('C:\\Users\\Paweł\\Desktop\\Geometric_Algorithms_Project\\data\\gif\\quad_test.gif'))

@@ -52,10 +52,10 @@ class QuadtreeNode:
         
         # Create areas for children (NW, NE, SW, SE)
         areas = [
-            Area(Point(self.area.bottom_left.x, y_mid), Point(x_mid, self.area.upper_right.y)),  # NW
-            Area(Point(x_mid, y_mid), self.area.upper_right),                                    # NE
             Area(self.area.bottom_left, Point(x_mid, y_mid)),                                    # SW
-            Area(Point(x_mid, self.area.bottom_left.y), Point(self.area.upper_right.x, y_mid))   # SE
+            Area(Point(self.area.bottom_left.x, y_mid), Point(x_mid, self.area.upper_right.y)),  # NW
+            Area(Point(x_mid, self.area.bottom_left.y), Point(self.area.upper_right.x, y_mid)),   # SE
+            Area(Point(x_mid, y_mid), self.area.upper_right)                                    # NE
         ]
         
         # Initialize child nodes with incremented depth
