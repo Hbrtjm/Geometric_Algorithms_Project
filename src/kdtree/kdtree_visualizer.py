@@ -209,7 +209,7 @@ class KDTreeVisualizer:
             self.plot_kdtree_splits(node.left, depth + 1, [(bounds[0][0], x), bounds[1]])
             self.plot_kdtree_splits(node.right, depth + 1, [(x, bounds[0][1]), bounds[1]])
         else:  # Horizontal line (split by y)
-            line = self.ax.plot([bounds[0][0], bounds[0][1]], [y, y], color='yellow', linestyle='--', linewidth=1,zorder=1)
+            line = self.ax.plot([bounds[0][0], bounds[0][1]], [y, y], color='red', linestyle='--', linewidth=1,zorder=1)
             self.plot_kdtree_splits(node.left, depth + 1, [bounds[0], (bounds[1][0], y)])
             self.plot_kdtree_splits(node.right, depth + 1, [bounds[0], (y, bounds[1][1])])
         if line is not None:
@@ -302,7 +302,7 @@ class KDTreeVisualizer:
                 plot_kdtree_splits(node.left, depth + 1, [(bounds[0][0], x), bounds[1]])
                 plot_kdtree_splits(node.right, depth + 1, [(x, bounds[0][1]), bounds[1]])
             else:  # Horizontal line (split by y)
-                ax.plot([bounds[0][0], bounds[0][1]], [y, y], color='yellow', linestyle='--', linewidth=1,zorder=1)
+                ax.plot([bounds[0][0], bounds[0][1]], [y, y], color='red', linestyle='--', linewidth=1,zorder=1)
                 ax.plot(x, y, '.', color='blue', markersize=4,zorder=2)
                 plot_kdtree_splits(node.left, depth + 1, [bounds[0], (bounds[1][0], y)])
                 plot_kdtree_splits(node.right, depth + 1, [bounds[0], (y, bounds[1][1])])

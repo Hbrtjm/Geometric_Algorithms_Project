@@ -14,9 +14,12 @@ if [ ! -d "venv" ]; then
 fi
 
 # Activate virtual environment
-source venv/bin/activate
-echo "Virtual environment activated."
-
+if [ -f ./venv/bin/activate ]; then
+  source ./venv/bin/activate
+  echo "Virtual environment activated."
+else
+  echo "Failed to find activate script, installing libraries locally instead"
+fi
 # Install requirements
 if [ -f "requirements.txt" ]; then
   pip install --upgrade pip

@@ -1,5 +1,5 @@
-numpy
-matplotlib
-typing
-notebook
+numpy==2.2.1
+matplotlib==3.10.0
+typing==3.7.4.3
+notebook==7.3.2
 ipython==8.16.1
