@@ -15,7 +15,7 @@ fi
 
 # Activate virtual environment
 if [ -f ./venv/bin/activate ]; then
-  source ./venv/bin/activate
+  source $SCRIPT_DIR/../venv/bin/activate
   echo "Virtual environment activated."
 else
   echo "Failed to find activate script, installing libraries locally instead"
