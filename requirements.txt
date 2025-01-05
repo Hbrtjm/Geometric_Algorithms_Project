@@ -3,3 +3,4 @@ matplotlib==3.10.0
 typing==3.7.4.3
 notebook==7.3.2
 ipython==8.16.1
+ipympl==0.9.6
